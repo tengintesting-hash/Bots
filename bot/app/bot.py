@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import sys
 
 from aiogram import Bot, Dispatcher
 
@@ -21,6 +22,10 @@ async def main() -> None:
     setup_logging()
     logger = logging.getLogger("bot")
     await init_db()
+
+    if not settings.bot_token:
+        logger.error("BOT_TOKEN не задано. Додайте значення у .env та перезапустіть контейнер.")
+        sys.exit(1)
 
     bot = Bot(token=settings.bot_token)
     dispatcher = create_dispatcher()
