@@ -1,5 +1,5 @@
 from aiogram import Router
-from aiogram.filters import CommandStart
+from aiogram.filters import Command, CommandStart
 from aiogram.types import Message
 
 from app.db.shared_sqlite import add_balance, add_referral_event, create_user, get_user, is_banned, update_last_login
@@ -45,6 +45,15 @@ async def start_handler(message: Message):
         return
 
     await message.answer("✅ Ласкаво просимо!", reply_markup=webapp_keyboard())
+    await message.answer("Команда /ref — отримати реферальне посилання.")
+
+
+@router.message(Command("ref"))
+async def referral_handler(message: Message):
+    user_id = message.from_user.id
+    if await is_banned(user_id):
+        await message.answer("⛔ Ваш акаунт заблоковано. Зверніться до підтримки.")
+        return
     await message.answer(
         f"Ваше реферальне посилання: {referral_link(user_id)}",
     )
