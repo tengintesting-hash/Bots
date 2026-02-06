@@ -27,17 +27,32 @@ export default function App() {
   const userHeader = user ? { "X-User-Id": String(user.telegram_id) } : {};
 
   useEffect(() => {
+    const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    const getInitDataWithRetry = async () => {
+      if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.ready();
+      }
+
+      for (let attempt = 0; attempt < 5; attempt += 1) {
+        const initData = getTelegramInitData();
+        if (initData) {
+          return initData;
+        }
+        await wait(300);
+      }
+      return "";
+    };
+
     const init = async () => {
       try {
-        const initData = getTelegramInitData();
+        const initData = await getInitDataWithRetry();
         if (!initData) {
-          setError("Відкрийте застосунок через Telegram WebApp.");
+          setError(
+            "Telegram WebApp не передав дані. Перевірте HTTPS-домен у BotFather та WEBAPP_URL."
+          );
           setLoading(false);
           return;
-        }
-
-        if (window.Telegram && window.Telegram.WebApp) {
-          window.Telegram.WebApp.ready();
         }
 
         const authUser = await authTelegram(initData);
