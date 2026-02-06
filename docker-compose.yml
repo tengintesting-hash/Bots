@@ -1,0 +1,60 @@
+services:
+  backend:
+    build: ./backend
+    env_file: .env
+    volumes:
+      - ./data:/data
+      - ./logs:/app/logs
+    restart: unless-stopped
+
+  bot:
+    build: ./bot
+    env_file: .env
+    volumes:
+      - ./data:/data
+      - ./logs:/app/logs
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    env_file: .env
+    environment:
+      VITE_BACKEND_URL: ${VITE_BACKEND_URL:-https://blacktime.uno}
+      VITE_BOT_USERNAME: ${BOT_USERNAME:-casino_prof_bot}
+    volumes:
+      - frontend_dist:/dist
+    restart: unless-stopped
+
+  nginx:
+    build: ./nginx
+    env_file: .env
+    volumes:
+      - frontend_dist:/usr/share/nginx/html:ro
+      - ./logs:/var/log/nginx
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - certbot_www:/var/www/certbot
+      - certbot_etc:/etc/letsencrypt
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+      - frontend
+    restart: unless-stopped
+
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - certbot_www:/var/www/certbot
+      - certbot_etc:/etc/letsencrypt
+    entrypoint: ""
+    command: ["sh", "-c", "certbot certonly --webroot --webroot-path=/var/www/certbot --email ${CERTBOT_EMAIL} --agree-tos --no-eff-email -d ${DOMAIN}"]
+    depends_on:
+      - nginx
+
+volumes:
+  frontend_dist:
+  certbot_www:
+  certbot_etc:
