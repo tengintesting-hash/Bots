@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  backend:
+    build: ./backend
+    env_file: .env
+    volumes:
+      - ./data:/data
+      - ./logs:/app/logs
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    restart: unless-stopped
+
+  bot:
+    build: ./bot
+    env_file: .env
+    volumes:
+      - ./data:/data
+      - ./logs:/app/logs
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    env_file: .env
+    environment:
+      VITE_BACKEND_URL: ${BACKEND_PUBLIC_URL:-http://localhost:8000}
+      VITE_BOT_USERNAME: ${BOT_USERNAME:-your_bot_username}
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    restart: unless-stopped
