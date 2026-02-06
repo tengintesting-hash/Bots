@@ -10,16 +10,20 @@
 - Linux: використайте інструкцію для вашого дистрибутиву на сайті Docker.
 
 ## Запуск
-1. Скопіюйте `.env.example` у `.env` та заповніть значення.
-2. Запустіть сервіси:
+1. Скопіюйте `.env.example` у `.env` та заповніть значення (домен `blacktime.uno`, бот `casino_prof_bot`).
+2. Переконайтесь, що DNS домену вказує на ваш сервер і відкривається у браузері.
+3. Запустіть сервіси:
    ```bash
    docker compose up -d --build
    ```
-3. Якщо порт 8000 зайнятий, змініть `BACKEND_PORT` у `.env`.
-4. Якщо бот не стартує, перевірте що `BOT_TOKEN` заповнений і перегляньте логи бота.
-5. Якщо є застарілі контейнери, додайте `--remove-orphans`.
-6. Для реферального посилання використайте команду `/ref` у боті.
-7. Для WebApp встановіть `WEBAPP_URL` і `CORS_ORIGINS` на ваш HTTPS-домен (однаковий домен).
+4. Отримайте SSL-сертифікат:
+   ```bash
+   docker compose run --rm certbot
+   ```
+5. Перезапустіть nginx:
+   ```bash
+   docker compose restart nginx
+   ```
 
 ## Зупинка
 ```bash
@@ -39,35 +43,38 @@ docker compose down
   ```bash
   docker compose logs -f frontend
   ```
+- Nginx:
+  ```bash
+  docker compose logs -f nginx
+  ```
 
 Також логи пишуться у папку `logs/`.
 
 ## Додавання каналів і оферів через curl
 ### Додати канал
 ```bash
-curl -X POST http://localhost:8000/admin/channels \
+curl -X POST https://blacktime.uno/admin/channels \
   -H "Content-Type: application/json" \
-  -H "X-Admin-Token: change_me_admin_token" \
+  -H "X-Admin-Token: 8578805679" \
   -d '{"channel_id": -1001234567890, "link": "https://t.me/channel", "title": "Супер канал", "is_required": true}'
 ```
 
 ### Додати офер
 ```bash
-curl -X POST http://localhost:8000/admin/offers \
+curl -X POST https://blacktime.uno/admin/offers \
   -H "Content-Type: application/json" \
-  -H "X-Admin-Token: change_me_admin_token" \
+  -H "X-Admin-Token: 8578805679" \
   -d '{"title": "Новий офер", "reward_pro": 12000, "link": "https://example.com", "is_limited": false, "is_active": true}'
 ```
 
 ## BotFather WebApp домен
 У BotFather вкажіть домен для WebApp:
 ```
-localhost
+blacktime.uno
 ```
-Для продакшену вкажіть ваш реальний домен.
 Для відкриття WebApp у Telegram потрібен HTTPS-домен і він має бути доданий у BotFather.
-Для локального тесту використайте тунель (наприклад, ngrok) і вставте його у `WEBAPP_URL`.
 
 ## Корисні змінні оточення
-- `BACKEND_PORT` та `FRONTEND_PORT` для зміни локальних портів.
+- `DOMAIN` і `CERTBOT_EMAIL` для SSL.
+- `CORS_ORIGINS` та `WEBAPP_URL` повинні дорівнювати `https://blacktime.uno`.
 - `VITE_BACKEND_URL` і `VITE_BOT_USERNAME` для фронтенду.

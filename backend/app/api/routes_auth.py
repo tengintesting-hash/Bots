@@ -16,6 +16,8 @@ class AuthPayload(BaseModel):
     initData: str
 
 
+
+
 @router.post("/telegram")
 async def auth_telegram(payload: AuthPayload, session: AsyncSession = Depends(get_session)):
     data = verify_telegram_init_data(payload.initData)
@@ -47,3 +49,4 @@ async def auth_telegram(payload: AuthPayload, session: AsyncSession = Depends(ge
         "is_deposit": user.is_deposit,
         "banned": user.banned,
     }
+

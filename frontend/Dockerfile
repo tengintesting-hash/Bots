@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:20-alpine AS build
 
 WORKDIR /app
 
@@ -6,5 +6,11 @@ COPY package.json ./
 RUN npm install
 
 COPY . ./
+RUN npm run build
 
-CMD ["npm", "run", "dev"]
+FROM node:20-alpine
+
+WORKDIR /app
+COPY --from=build /app/dist /app/dist
+
+CMD ["sh", "-c", "cp -r /app/dist/* /dist && tail -f /dev/null"]
