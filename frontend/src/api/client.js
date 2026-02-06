@@ -4,6 +4,18 @@ export const getTelegramInitData = () => {
   if (window.Telegram && window.Telegram.WebApp) {
     return window.Telegram.WebApp.initData;
   }
+  const searchParams = new URLSearchParams(window.location.search);
+  const dataFromQuery = searchParams.get("tgWebAppData");
+  if (dataFromQuery) {
+    return dataFromQuery;
+  }
+  if (window.location.hash) {
+    const hashParams = new URLSearchParams(window.location.hash.replace("#", ""));
+    const dataFromHash = hashParams.get("tgWebAppData");
+    if (dataFromHash) {
+      return dataFromHash;
+    }
+  }
   return "";
 };
 
