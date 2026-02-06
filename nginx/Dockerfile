@@ -1,3 +1,7 @@
 FROM nginx:1.27-alpine
 
-COPY conf.d/default.conf /etc/nginx/templates/default.conf.template
+COPY conf.d/default-http.conf /etc/nginx/templates/default-http.conf.template
+COPY conf.d/default-https.conf /etc/nginx/templates/default-https.conf.template
+COPY entrypoint.sh /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]

@@ -59,7 +59,11 @@ export default function App() {
         setUser(authUser);
         setLoading(false);
       } catch (err) {
-        setError("Не вдалося авторизуватися. Спробуйте пізніше.");
+        if (err.status === 401) {
+          setError("Невалідні дані Telegram. Перевірте BOT_TOKEN бота.");
+        } else {
+          setError("Не вдалося авторизуватися. Спробуйте пізніше.");
+        }
         setLoading(false);
       }
     };

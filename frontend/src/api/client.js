@@ -4,14 +4,23 @@ export const getTelegramInitData = () => {
   if (window.Telegram && window.Telegram.WebApp) {
     return window.Telegram.WebApp.initData;
   }
-  const searchParams = new URLSearchParams(window.location.search);
-  const dataFromQuery = searchParams.get("tgWebAppData");
+
+  const getRawParam = (raw, key) => {
+    const params = raw.replace(/^\\?/, "").replace(/^#/, "").split("&");
+    for (const pair of params) {
+      if (pair.startsWith(`${key}=`)) {
+        return pair.substring(key.length + 1);
+      }
+    }
+    return "";
+  };
+
+  const dataFromQuery = getRawParam(window.location.search, "tgWebAppData");
   if (dataFromQuery) {
     return dataFromQuery;
   }
   if (window.location.hash) {
-    const hashParams = new URLSearchParams(window.location.hash.replace("#", ""));
-    const dataFromHash = hashParams.get("tgWebAppData");
+    const dataFromHash = getRawParam(window.location.hash, "tgWebAppData");
     if (dataFromHash) {
       return dataFromHash;
     }
@@ -32,7 +41,9 @@ export const apiRequest = async (path, options = {}) => {
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(errorText || "Помилка запиту");
+    const error = new Error(errorText || "Помилка запиту");
+    error.status = response.status;
+    throw error;
   }
 
   return response.json();

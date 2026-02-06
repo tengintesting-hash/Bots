@@ -17,11 +17,15 @@
    docker compose up -d --build
    ```
 4. Якщо порт 80/443 зайнятий, змініть `NGINX_HTTP_PORT` і `NGINX_HTTPS_PORT` у `.env`.
-5. Отримайте SSL-сертифікат (потрібен відкритий порт 80):
+5. Перевірте, що HTTP працює:
+   ```bash
+   curl -I http://blacktime.uno
+   ```
+6. Отримайте SSL-сертифікат (потрібен відкритий порт 80):
    ```bash
    docker compose run --rm certbot
    ```
-6. Перезапустіть nginx:
+7. Перезапустіть nginx:
    ```bash
    docker compose restart nginx
    ```
