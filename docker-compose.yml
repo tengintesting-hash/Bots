@@ -8,7 +8,7 @@ services:
       - ./data:/data
       - ./logs:/app/logs
     ports:
-      - "8000:8000"
+      - "${BACKEND_PORT:-8000}:8000"
     restart: unless-stopped
 
   bot:
@@ -24,6 +24,9 @@ services:
   frontend:
     build: ./frontend
     env_file: .env
+    environment:
+      VITE_BACKEND_URL: ${BACKEND_PUBLIC_URL:-http://localhost:8000}
+      VITE_BOT_USERNAME: ${BOT_USERNAME:-your_bot_username}
     ports:
-      - "5173:5173"
+      - "${FRONTEND_PORT:-5173}:5173"
     restart: unless-stopped

@@ -15,6 +15,7 @@
    ```bash
    docker compose up -d
    ```
+3. Якщо порт 8000 зайнятий, змініть `BACKEND_PORT` у `.env`.
 
 ## Зупинка
 ```bash
@@ -60,3 +61,7 @@ curl -X POST http://localhost:8000/admin/offers \
 localhost
 ```
 Для продакшену вкажіть ваш реальний домен.
+
+## Корисні змінні оточення
+- `BACKEND_PORT` та `FRONTEND_PORT` для зміни локальних портів.
+- `VITE_BACKEND_URL` і `VITE_BOT_USERNAME` для фронтенду.
