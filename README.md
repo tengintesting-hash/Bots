@@ -16,11 +16,12 @@
    ```bash
    docker compose up -d --build
    ```
-4. Отримайте SSL-сертифікат:
+4. Якщо порт 80/443 зайнятий, змініть `NGINX_HTTP_PORT` і `NGINX_HTTPS_PORT` у `.env`.
+5. Отримайте SSL-сертифікат (потрібен відкритий порт 80):
    ```bash
    docker compose run --rm certbot
    ```
-5. Перезапустіть nginx:
+6. Перезапустіть nginx:
    ```bash
    docker compose restart nginx
    ```
@@ -76,5 +77,6 @@ blacktime.uno
 
 ## Корисні змінні оточення
 - `DOMAIN` і `CERTBOT_EMAIL` для SSL.
+- `NGINX_HTTP_PORT` і `NGINX_HTTPS_PORT` якщо 80/443 зайняті.
 - `CORS_ORIGINS` та `WEBAPP_URL` повинні дорівнювати `https://blacktime.uno`.
 - `VITE_BACKEND_URL` і `VITE_BOT_USERNAME` для фронтенду.

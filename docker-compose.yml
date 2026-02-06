@@ -37,8 +37,8 @@ services:
       - certbot_www:/var/www/certbot
       - certbot_etc:/etc/letsencrypt
     ports:
-      - "80:80"
-      - "443:443"
+      - "${NGINX_HTTP_PORT:-80}:80"
+      - "${NGINX_HTTPS_PORT:-443}:443"
     depends_on:
       - backend
       - frontend
