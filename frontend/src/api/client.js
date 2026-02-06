@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+const API_URL = import.meta.env.VITE_BACKEND_URL || window.location.origin;
 
 export const getTelegramInitData = () => {
   if (window.Telegram && window.Telegram.WebApp) {
